@@ -1,0 +1,2 @@
+# BitBot
+A Discord Bot
