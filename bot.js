@@ -17,15 +17,15 @@ bot.on('message', msg => {
   let command = message.content.split(' ')[0];
   command = command.slice(config.prefix.length);
 
-  if (command == 'ping')) {
+  if (command == 'ping') {
     msg.channel.sendMessage('pong!');
   }
 
-  if (command == 'help')) {
+  if (command == 'help') {
     msg.channel.sendMessage('I am a noob and can only reply to !ping :(');
   }
 
-  if (command == '8ball')) {
+  if (command == '8ball') {
     msg.channel.sendMessage(ballAnswers[Math.floor(Math.random() * 20) +1]);
   }
   if (msg.content.startsWith(config.prefix + 'russian')) {
