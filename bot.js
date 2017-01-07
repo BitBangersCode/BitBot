@@ -14,7 +14,7 @@ bot.on('message', msg => {
   if (msg.author.bot) return;
   if (!msg.content.startsWith(config.prefix)) return;
 
-  let command = message.content.split(' ')[0];
+  let command = msg.content.split(' ')[0];
   command = command.slice(config.prefix.length);
 
   if (command == 'ping') {
