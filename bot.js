@@ -36,7 +36,7 @@ bot.on('message', msg => {
       msg.channel.sendMessage('erro no args')
     }
     if (args[0] == 'load') {
-        let bullet == Math.floor(Math.random() * 6) + 1;
+        let bullet = Math.floor(Math.random() * 6) + 1;
     }
     if (args[0] == 'pull') {
       if (bullet == chamber) {
@@ -47,7 +47,7 @@ bot.on('message', msg => {
       }
     }
     if (args[0] == 'spin') {
-      let bullet == Math.floor(Math.random() * 6) + 1;
+      let bullet = Math.floor(Math.random() * 6) + 1;
     }
   }
 });
