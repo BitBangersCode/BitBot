@@ -17,6 +17,8 @@ bot.on('message', msg => {
   let command = msg.content.split(' ')[0];
   command = command.slice(config.prefix.length);
 
+  let args = msg.content.split(' ').slice(1);
+
   if (command == 'ping') {
     msg.channel.sendMessage('pong!');
   }
@@ -28,7 +30,10 @@ bot.on('message', msg => {
   if (command == '8ball') {
     msg.channel.sendMessage(ballAnswers[Math.floor(Math.random() * 20) +1]);
   }
-  if (msg.content.startsWith(config.prefix + 'russian')) {
+  if (command == 'russian') {
+    if (!args) {
+      msg.channel.sendMessage('erro no args')
+    }
     let bullet = 3;
     if (Math.floor(Math.random() * 6) + 1 == bullet) {
       msg.channel.sendMessage('BANG!');
