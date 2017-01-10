@@ -31,14 +31,23 @@ bot.on('message', msg => {
     msg.channel.sendMessage(ballAnswers[Math.floor(Math.random() * 20) +1]);
   }
   if (command == 'russian') {
-    if (!args) {
+    let chamber = 1;
+    if (!args[0]) {
       msg.channel.sendMessage('erro no args')
     }
-    let bullet = 3;
-    if (Math.floor(Math.random() * 6) + 1 == bullet) {
-      msg.channel.sendMessage('BANG!');
-    } else {
-      msg.channel.sendMessage('CLICK');
+    if (args[0] == 'load') {
+        let bullet == Math.floor(Math.random() * 6) + 1;
+    }
+    if (args[0] == 'pull') {
+      if (bullet == chamber) {
+        msg.channel.sendMessage('BANG!');
+      } else {
+        msg.channel.sendMessage('CLICK!');
+        bullet -= 1;
+      }
+    }
+    if (args[0] == 'spin') {
+      let bullet == Math.floor(Math.random() * 6) + 1;
     }
   }
 });
