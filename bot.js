@@ -5,6 +5,7 @@ const fs = require("fs");
 const bot = new Discord.Client();
 
 let ballAnswers = JSON.parse(fs.readFileSync('./8ball.json', 'utf8'));
+var bullet = 0;
 
 bot.on('ready', () => {
   console.log('BitBot is ready');
@@ -33,21 +34,36 @@ bot.on('message', msg => {
   if (command == 'russian') {
     let chamber = 1;
     if (!args[0]) {
-      msg.channel.sendMessage('erro no args')
+      msg.channel.sendMessage('Usage: !russian load, !russian spin, !russian pull');
     }
     if (args[0] == 'load') {
-        let bullet = Math.floor(Math.random() * 6) + 1;
+      if (bullet == 0) {
+        bullet = Math.floor(Math.random() * 6) + 1;
+        msg.channel.sendMessage('Loading bullet...');
+      } else if (bullet > 0) {
+        msg.channel.sendMessage('Bullet already loaded...');
+      }
     }
     if (args[0] == 'pull') {
-      if (bullet == chamber) {
-        msg.channel.sendMessage('BANG!');
+      if (bullet > 0) {
+        if (bullet == chamber) {
+          msg.channel.sendMessage('BANG!');
+          bullet -= 1;
+        } else {
+          msg.channel.sendMessage('CLICK!');
+          bullet -= 1;
+        }
       } else {
-        msg.channel.sendMessage('CLICK!');
-        bullet -= 1;
+        msg.channel.sendMessage("Please load the gun...");
       }
     }
     if (args[0] == 'spin') {
-      let bullet = Math.floor(Math.random() * 6) + 1;
+      if (bullet > 0){
+        bullet = Math.floor(Math.random() * 6) + 1;
+        msg.channel.sendMessage('Spinning chamber...');
+      } else {
+        msg.channel.sendMessage("Please load the gun...");
+      }
     }
   }
 });
