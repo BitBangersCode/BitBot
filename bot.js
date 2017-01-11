@@ -20,6 +20,10 @@ bot.on('message', msg => {
 
   let args = msg.content.split(' ').slice(1);
 
+  if (command == 'say') {
+    msg.channel.sendMessage(args.join(' '));
+  }
+  
   if (command == 'ping') {
     msg.channel.sendMessage('pong!');
   }
