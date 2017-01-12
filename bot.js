@@ -21,65 +21,74 @@ bot.on('ready', () => {
   console.log('BitBot is ready');
 });
 
-bot.on('message', msg => {
-  if (msg.author.bot) return;
-  if (!msg.content.startsWith(config.prefix)) return;
+bot.on('message', message => {
+  if (message.author.bot) return;
+  if (!message.content.startsWith(config.prefix)) return;
 
-  let command = msg.content.split(' ')[0];
+  let command = message.content.split(' ')[0];
   command = command.slice(config.prefix.length);
 
-  let args = msg.content.split(' ').slice(1);
+  let args = message.content.split(' ').slice(1);
 
   if (command == 'say') {
-    msg.channel.sendMessage(args.join(' '));
+    message.channel.sendMessage(args.join(' '));
   }
-  
+
   if (command == 'ping') {
-    msg.channel.sendMessage('pong!');
+    message.channel.sendMessage('pong!');
   }
 
   if (command == 'help') {
-    msg.channel.sendMessage(helpMessage);
+    message.channel.sendMessage(helpMessage);
   }
 
   if (command == '8ball') {
-    msg.channel.sendMessage(ballAnswers[Math.floor(Math.random() * 20) +1]);
+    message.channel.sendMessage(ballAnswers[Math.floor(Math.random() * 20) +1]);
   }
+
   if (command == 'russian') {
     let chamber = 1;
     if (!args[0]) {
-      msg.channel.sendMessage('Usage: !russian load, !russian spin, !russian pull');
+      message.channel.sendMessage('Usage: !russian load, !russian spin, !russian pull');
     }
     if (args[0] == 'load') {
       if (bullet == 0) {
         bullet = Math.floor(Math.random() * 6) + 1;
-        msg.channel.sendMessage('Loading bullet...');
+        message.channel.sendMessage('Loading bullet...');
       } else if (bullet > 0) {
-        msg.channel.sendMessage('Bullet already loaded...');
+        message.channel.sendMessage('Bullet already loaded...');
       }
     }
     if (args[0] == 'pull') {
       if (bullet > 0) {
         if (bullet == chamber) {
-          let role = msg.guild.roles.find('name', 'DEAD!');
-          msg.channel.sendMessage('BANG!');
-          msg.channel.sendMessage(msg.member +'\'s brains explode! May he rest in peace.' )
-          msg.member.addRole(role).catch(console.error);
+          let role = message.guild.roles.find('name', config.deathRole);
+          message.channel.sendMessage('BANG!');
+          message.channel.sendMessage(message.member +'\'s brains explode! Rest in peace.' )
+          if (role) {
+            message.member.addRole(role).catch(console.error);
+            setTimeout(function() {
+              message.channel.sendMessage(message.member + ' has risen from the dead!')
+              message.member.removeRole(role).catch(console.error);
+            }, 300000);
+          } else {
+            message.channel.sendMessage('No Death role. Please add Death role and update config.')
+          }
           bullet -= 1;
         } else {
-          msg.channel.sendMessage('CLICK!');
+          message.channel.sendMessage('CLICK!');
           bullet -= 1;
         }
       } else {
-        msg.channel.sendMessage("Please load the gun...");
+        message.channel.sendMessage("Please load the gun...");
       }
     }
     if (args[0] == 'spin') {
       if (bullet > 0){
         bullet = Math.floor(Math.random() * 6) + 1;
-        msg.channel.sendMessage('Spinning chamber...');
+        message.channel.sendMessage('Spinning chamber...');
       } else {
-        msg.channel.sendMessage("Please load the gun...");
+        message.channel.sendMessage("Please load the gun...");
       }
     }
   }
