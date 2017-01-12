@@ -3,6 +3,16 @@ const config = require("./config.json");
 const fs = require("fs");
 
 const bot = new Discord.Client();
+const helpMessage = `\`\`\`
+Usage:
+        !help     - Shows this help message.
+        !ping     - Pong!
+        !8ball    - Ask me a question.
+        !russian  - Russian Roulette. Death = 10 minute mute!
+                  - load  - Loads a bullet.
+                  - spin  - Spins the chamber.
+                  - pull  - Pulls the trigger.
+\`\`\``;
 
 let ballAnswers = JSON.parse(fs.readFileSync('./8ball.json', 'utf8'));
 var bullet = 0;
@@ -25,7 +35,7 @@ bot.on('message', msg => {
   }
 
   if (command == 'help') {
-    msg.channel.sendMessage('I am a noob and can only reply to !ping :(');
+    msg.channel.sendMessage(helpMessage);
   }
 
   if (command == '8ball') {
@@ -47,7 +57,10 @@ bot.on('message', msg => {
     if (args[0] == 'pull') {
       if (bullet > 0) {
         if (bullet == chamber) {
+          let role = msg.guild.roles.find('name', 'DEAD!');
           msg.channel.sendMessage('BANG!');
+          msg.channel.sendMessage(msg.member +'\'s brains explode! May he rest in peace.' )
+          msg.member.addRole(role).catch(console.error);
           bullet -= 1;
         } else {
           msg.channel.sendMessage('CLICK!');
