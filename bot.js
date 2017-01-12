@@ -1,5 +1,4 @@
 const Discord = require('discord.js');
-const config = require("./config.json");
 const fs = require("fs");
 
 const bot = new Discord.Client();
@@ -15,10 +14,22 @@ Usage:
 \`\`\``;
 
 let ballAnswers = JSON.parse(fs.readFileSync('./8ball.json', 'utf8'));
+let config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
 var bullet = 0;
 
 bot.on('ready', () => {
-  console.log('BitBot is ready');
+  if (!('token' in config)) {
+    console.log('Please add token.');
+    bot.destroy();
+  } else if (!('prefix' in config)) {
+    console.log('Please add a prefix');
+    bot.destroy();
+    } else if (!('deathRole' in config)) {
+    console.log('Please add a deathRole');
+    bot.destroy();
+  } else {
+    console.log('BitBot is ready');
+  }
 });
 
 bot.on('message', message => {
@@ -48,8 +59,14 @@ bot.on('message', message => {
 
   if (command == 'russian') {
     let chamber = 1;
-    if (!args[0]) {
-      message.channel.sendMessage('Usage: !russian load, !russian spin, !russian pull');
+    if (!args[0] || args[0] == 'help') {
+      message.channel.sendMessage(`\`\`\`
+Usage:
+        !russian  - Russian Roulette. Death = 10 minute mute!
+                  - load  - Loads a bullet.
+                  - spin  - Spins the chamber.
+                  - pull  - Pulls the trigger.
+\`\`\``);
     }
     if (args[0] == 'load') {
       if (bullet == 0) {
