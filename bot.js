@@ -37,6 +37,12 @@ bot.on('message', message => {
   if (message.author.bot) return;
   if (!message.content.startsWith(config.prefix)) return;
 
+  //create needed roles. Need to do this on bot startup. USE guild create!
+  //if (!message.guild.roles.find('name', config.deathRole)) {
+  //  message.guild.createRole({name : config.deathRole}).catch(console.error);
+  //  console.log(`Created Role:  ${config.deathRole}`);
+  //}
+
   if (!stats[message.author.id]) {
     stats[message.author.id] = {deaths: 0}
   }
@@ -90,10 +96,10 @@ Usage:
     if (args[0] == 'pull') {
       if (bullet > 0) {
         if (bullet == chamber) {
-          let role = message.guild.roles.find('name', config.deathRole);
           message.channel.sendMessage('BANG!');
           message.channel.sendMessage(message.member +'\'s brains explode! Rest in peace.' );
           stats[message.author.id].deaths++;
+          let role = message.guild.roles.find('name', config.deathRole);
           if (role) {
             message.member.addRole(role).catch(console.error);
             setTimeout(function() {
