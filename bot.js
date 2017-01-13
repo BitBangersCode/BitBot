@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const fs = require("fs");
 
 const bot = new Discord.Client();
+
 const helpMessage = `\`\`\`
 Usage:
         !help     - Shows this help message.
@@ -19,29 +20,12 @@ let stats = JSON.parse(fs.readFileSync('./stats.json', 'utf8'));
 var bullet = 0;
 
 bot.on('ready', () => {
-  if (!('token' in config)) {
-    console.log('Please add token.');
-    bot.destroy();
-  } else if (!('prefix' in config)) {
-    console.log('Please add a prefix');
-    bot.destroy();
-    } else if (!('deathRole' in config)) {
-    console.log('Please add a deathRole');
-    bot.destroy();
-  } else {
-    console.log('BitBot is ready');
-  }
+  console.log('bot is ready');
 });
 
 bot.on('message', message => {
   if (message.author.bot) return;
   if (!message.content.startsWith(config.prefix)) return;
-
-  //create needed roles. Need to do this on bot startup. USE guild create!
-  //if (!message.guild.roles.find('name', config.deathRole)) {
-  //  message.guild.createRole({name : config.deathRole}).catch(console.error);
-  //  console.log(`Created Role:  ${config.deathRole}`);
-  //}
 
   if (!stats[message.author.id]) {
     stats[message.author.id] = {deaths: 0}
