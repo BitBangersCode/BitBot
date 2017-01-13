@@ -7,7 +7,7 @@ Usage:
         !help     - Shows this help message.
         !ping     - Pong!
         !8ball    - Ask me a question.
-        !russian  - Russian Roulette. Death = 10 minute mute!
+        !russian  - Russian Roulette. Death = Banished to hell!
                   - load  - Loads a bullet.
                   - spin  - Spins the chamber.
                   - pull  - Pulls the trigger.
@@ -15,6 +15,7 @@ Usage:
 
 let ballAnswers = JSON.parse(fs.readFileSync('./8ball.json', 'utf8'));
 let config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+let stats = JSON.parse(fs.readFileSync('./stats.json', 'utf8'));
 var bullet = 0;
 
 bot.on('ready', () => {
@@ -36,6 +37,10 @@ bot.on('message', message => {
   if (message.author.bot) return;
   if (!message.content.startsWith(config.prefix)) return;
 
+  if (!stats[message.author.id]) {
+    stats[message.author.id] = {deaths: 0}
+  }
+
   let command = message.content.split(' ')[0];
   command = command.slice(config.prefix.length);
 
@@ -43,6 +48,12 @@ bot.on('message', message => {
 
   if (command == 'say') {
     message.channel.sendMessage(args.join(' '));
+  }
+
+  if (command == 'stats') {
+    message.channel.sendMessage(`\`\`\`
+Deaths:   ${stats[message.author.id].deaths}
+      \`\`\``);
   }
 
   if (command == 'ping') {
@@ -81,15 +92,16 @@ Usage:
         if (bullet == chamber) {
           let role = message.guild.roles.find('name', config.deathRole);
           message.channel.sendMessage('BANG!');
-          message.channel.sendMessage(message.member +'\'s brains explode! Rest in peace.' )
+          message.channel.sendMessage(message.member +'\'s brains explode! Rest in peace.' );
+          stats[message.author.id].deaths++;
           if (role) {
             message.member.addRole(role).catch(console.error);
             setTimeout(function() {
-              message.channel.sendMessage(message.member + ' has risen from the dead!')
+              message.channel.sendMessage(message.member + ' has risen from the dead!');
               message.member.removeRole(role).catch(console.error);
             }, 300000);
           } else {
-            message.channel.sendMessage('No Death role. Please add Death role and update config.')
+            message.channel.sendMessage('No Death role. Please add Death role and update config.');
           }
           bullet -= 1;
         } else {
@@ -109,6 +121,11 @@ Usage:
       }
     }
   }
+  fs.writeFile('./stats.json', JSON.stringify(stats), (err) => {
+    if (err) {
+      console.log(err)
+    }
+  });
 });
 
 bot.login(config.token);

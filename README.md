@@ -10,3 +10,10 @@ Requires a config.json:
   "deathRole" : "role"
 }
 ```
+Requires a stats.json:
+
+```
+{
+
+}
+```
