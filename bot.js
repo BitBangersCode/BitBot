@@ -49,6 +49,9 @@ bot.on('message', message => {
     } else {
       let mention = message.mentions.users.first();
       if (mention && !mention.bot) {
+        if (!stats[mention.id]) {
+          stats[mention.id] = {deaths: 0};
+        }
         message.channel.sendMessage(`\`\`\`
           Stats for ${message.member.user.username}
           Deaths:   ${stats[mention.id].deaths}
