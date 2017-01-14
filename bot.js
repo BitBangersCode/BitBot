@@ -41,9 +41,23 @@ bot.on('message', message => {
   }
 
   if (command == 'stats') {
-    message.channel.sendMessage(`\`\`\`
-      Deaths:   ${stats[message.author.id].deaths}
-      \`\`\``);
+    if (!args[0]) {
+      message.channel.sendMessage(`\`\`\`
+        Stats for ${message.member.user.username}
+        Deaths:   ${stats[message.author.id].deaths}
+        \`\`\``);
+    } else {
+      let mention = message.mentions.users.first();
+      if (mention && !mention.bot) {
+        message.channel.sendMessage(`\`\`\`
+          Stats for ${message.member.user.username}
+          Deaths:   ${stats[mention.id].deaths}
+          \`\`\``);
+      } else {
+        message.channel.sendMessage(`No stats for user. Either a group mention, a bot, or user does not exist`);
+      }
+    }
+
     }
 
     if (command == 'ping') {
