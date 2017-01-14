@@ -53,7 +53,7 @@ bot.on('message', message => {
           stats[mention.id] = {deaths: 0};
         }
         message.channel.sendMessage(`\`\`\`
-          Stats for ${message.member.user.username}
+          Stats for ${mention.username}
           Deaths:   ${stats[mention.id].deaths}
           \`\`\``);
       } else {
