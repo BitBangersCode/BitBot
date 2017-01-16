@@ -3,21 +3,22 @@ const fs = require("fs");
 
 const bot = new Discord.Client();
 
-const helpMessage = `\`\`\`
-Usage:
-!help     - Shows this help message.
-!ping     - Pong!
-!8ball    - Ask me a question.
-!russian  - Russian Roulette. Death = Banished to hell!
-- load  - Loads a bullet.
-- spin  - Spins the chamber.
-- pull  - Pulls the trigger.
-\`\`\``;
-
 let ballAnswers = JSON.parse(fs.readFileSync('./8ball.json', 'utf8'));
 let config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
 let stats = JSON.parse(fs.readFileSync('./stats.json', 'utf8'));
 var bullet = 0;
+
+const helpMessage = `\`\`\`
+Usage:
+        ${config.prefix}help     - Shows this help message.
+        ${config.prefix}ping     - Pong!
+        ${config.prefix}8ball    - Ask me a question.
+        ${config.prefix}russian  - Russian Roulette. Death = Banished to hell!
+                  - load  - Loads a bullet.
+                  - spin  - Spins the chamber.
+                  - pull  - Pulls the trigger.
+        ${config.prefix}stats    - Display user stast.
+\`\`\``;
 
 bot.on('ready', () => {
   console.log('bot is ready');
@@ -43,7 +44,7 @@ bot.on('message', message => {
   if (command == 'stats') {
     if (!args[0]) {
       message.channel.sendMessage(`\`\`\`
-        Stats for ${message.member.user.username}
+Stats for ${message.member.user.username}
         Deaths:   ${stats[message.author.id].deaths}
         \`\`\``);
     } else {
@@ -53,7 +54,7 @@ bot.on('message', message => {
           stats[mention.id] = {deaths: 0};
         }
         message.channel.sendMessage(`\`\`\`
-          Stats for ${mention.username}
+  Stats for ${mention.username}
           Deaths:   ${stats[mention.id].deaths}
           \`\`\``);
       } else {
@@ -79,11 +80,11 @@ bot.on('message', message => {
       let chamber = 1;
       if (!args[0] || args[0] == 'help') {
         message.channel.sendMessage(`\`\`\`
-          Usage:
-          !russian  - Russian Roulette. Death = 10 minute mute!
-          - load  - Loads a bullet.
-          - spin  - Spins the chamber.
-          - pull  - Pulls the trigger.
+Usage:
+          ${config.prefix}russian  - Russian Roulette. Death = 10 minute mute!
+                    - load  - Loads a bullet.
+                    - spin  - Spins the chamber.
+                    - pull  - Pulls the trigger.
           \`\`\``);
         }
         if (args[0] == 'load') {
@@ -109,7 +110,7 @@ bot.on('message', message => {
                   setTimeout(function() {
                     message.channel.sendMessage(`${message.member} has risen from the dead!`);
                     message.member.removeRole(role).catch(console.error);
-                  }, 300000);
+                  }, 600000);
                 }
               } else {
                 message.channel.sendMessage('No Death role. Please add Death role and update config.');
