@@ -28,8 +28,15 @@ bot.on('message', message => {
   if (message.author.bot) return;
   if (!message.content.startsWith(config.prefix)) return;
 
+  let statsMessage = `\`\`\`
+  Stats for ${message.member.user.username}
+          Deaths:   ${stats[message.author.id].deaths}
+          Spins:    ${stats[message.author.id].spins}
+          Pulls:    ${stats[message.author.id].pulls}
+  \`\`\``
+
   if (!stats[message.author.id]) {
-    stats[message.author.id] = {deaths: 0}
+    stats[message.author.id] = {deaths: 0, spins: 0, pulls: 0}
   }
 
   let command = message.content.split(' ')[0];
@@ -49,8 +56,32 @@ bot.on('message', message => {
     } else {
       let mention = message.mentions.users.first();
       if (mention && !mention.bot) {
+        let member = message.guild.member(mention);
+        member.addRole(role);
+        message.channel.sendMessage(`${message.member} has been killed and sent to hell!`);
       } else {
         message.channel.sendMessage(`Cannot kill user. Either a group mention, a bot, or user does not exist`);
+      }
+    }
+  }
+
+  if (command == 'revive'){
+    let role = message.guild.roles.find('name', config.deathRole);
+    if (!args[0]) {
+      if (message.member.roles.has(role.id)) {
+        message.member.removeRole(role);
+        message.channel.sendMessage(`${message.member} have been brought back to the land of the living and is now alive!`);
+      } else {
+        message.channel.sendMessage(`${message.member} is already alive.`);
+      }
+    } else {
+      let mention = message.mentions.users.first();
+      if (mention && !mention.bot) {
+        let member = message.guild.member(mention);
+        member.removeRole(role);
+        message.channel.sendMessage(`${message.member} have been brought back to the land of the living and is now alive!`);
+      } else {
+        message.channel.sendMessage(`Cannot revive user. Either a group mention, a bot, or user does not exist`);
       }
     }
   }
@@ -61,20 +92,14 @@ bot.on('message', message => {
 
   if (command == 'stats') {
     if (!args[0]) {
-      message.channel.sendMessage(`\`\`\`
-Stats for ${message.member.user.username}
-        Deaths:   ${stats[message.author.id].deaths}
-        \`\`\``);
+      message.channel.sendMessage(statsMessage);
     } else {
       let mention = message.mentions.users.first();
       if (mention && !mention.bot) {
         if (!stats[mention.id]) {
           stats[mention.id] = {deaths: 0};
         }
-        message.channel.sendMessage(`\`\`\`
-  Stats for ${mention.username}
-          Deaths:   ${stats[mention.id].deaths}
-          \`\`\``);
+        message.channel.sendMessage(statsMessage);
       } else {
         message.channel.sendMessage(`No stats for user. Either a group mention, a bot, or user does not exist`);
       }
