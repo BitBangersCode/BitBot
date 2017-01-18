@@ -1,75 +1,192 @@
 const Discord = require('discord.js');
-const config = require("./config.json");
 const fs = require("fs");
 
 const bot = new Discord.Client();
 
 let ballAnswers = JSON.parse(fs.readFileSync('./8ball.json', 'utf8'));
+let config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+let stats = JSON.parse(fs.readFileSync('./stats.json', 'utf8'));
 var bullet = 0;
 
+const helpMessage = `\`\`\`
+Usage:
+        ${config.prefix}help     - Shows this help message.
+        ${config.prefix}ping     - Pong!
+        ${config.prefix}8ball    - Ask me a question.
+        ${config.prefix}russian  - Russian Roulette. Death = Banished to hell!
+                  - load  - Loads a bullet.
+                  - spin  - Spins the chamber.
+                  - pull  - Pulls the trigger.
+        ${config.prefix}stats    - Display user stast.
+\`\`\``;
+
 bot.on('ready', () => {
-  console.log('BitBot is ready');
+  console.log('bot is ready');
 });
 
-bot.on('message', msg => {
-  if (msg.author.bot) return;
-  if (!msg.content.startsWith(config.prefix)) return;
+bot.on('message', message => {
+  if (message.author.bot) return;
+  if (!message.content.startsWith(config.prefix)) return;
+  if (!stats[message.author.id]) {
+    stats[message.author.id] = {deaths: 0, spins: 0, pulls: 0}
+  }
 
-  let command = msg.content.split(' ')[0];
+  let statsMessage = `\`\`\`
+  Stats for ${message.member.user.username}
+          Deaths:   ${stats[message.author.id].deaths}
+          Spins:    ${stats[message.author.id].spins}
+          Pulls:    ${stats[message.author.id].pulls}
+  \`\`\``
+
+  let command = message.content.split(' ')[0];
   command = command.slice(config.prefix.length);
 
-  let args = msg.content.split(' ').slice(1);
+  let args = message.content.split(' ').slice(1);
+
+  if (command == 'kill'){
+    let role = message.guild.roles.find('name', config.deathRole);
+    if (!args[0]) {
+      if (message.member.roles.has(role.id)) {
+        message.channel.sendMessage(`${message.member} is already dead.`);
+      } else {
+        message.member.addRole(role);
+        message.channel.sendMessage(`${message.member} has been killed and sent to hell!`);
+      }
+    } else {
+      let mention = message.mentions.users.first();
+      if (mention && !mention.bot) {
+        let member = message.guild.member(mention);
+        member.addRole(role);
+        message.channel.sendMessage(`${member.user.toString()} has been killed and sent to hell!`);
+      } else {
+        message.channel.sendMessage(`Cannot kill user. Either a group mention, a bot, or user does not exist`);
+      }
+    }
+  }
+
+  if (command == 'revive'){
+    let role = message.guild.roles.find('name', config.deathRole);
+    if (!args[0]) {
+      if (message.member.roles.has(role.id)) {
+        message.member.removeRole(role);
+        message.channel.sendMessage(`${message.member} have been brought back to the land of the living and is now alive!`);
+      } else {
+        message.channel.sendMessage(`${message.member} is already alive.`);
+      }
+    } else {
+      let mention = message.mentions.users.first();
+      if (mention && !mention.bot) {
+        let member = message.guild.member(mention);
+        member.removeRole(role);
+        message.channel.sendMessage(`${member.user.toString()} have been brought back to the land of the living and is now alive!`);
+      } else {
+        message.channel.sendMessage(`Cannot revive user. Either a group mention, a bot, or user does not exist`);
+      }
+    }
+  }
 
   if (command == 'say') {
-    msg.channel.sendMessage(args.join(' '));
+    message.channel.sendMessage(args.join(' '));
   }
-  
+
+  if (command == 'stats') {
+    if (!args[0]) {
+      message.channel.sendMessage(statsMessage);
+    } else {
+      let mention = message.mentions.users.first();
+      if (mention && !mention.bot) {
+        if (!stats[mention.id]) {
+          stats[mention.id] = {deaths: 0, spins: 0, pulls: 0}
+        }
+        message.channel.sendMessage(`\`\`\`
+Stats for ${mention.username}
+        Deaths:   ${stats[mention.id].deaths}
+        Spins:    ${stats[mention.id].spins}
+        Pulls:    ${stats[mention.id].pulls}
+        \`\`\``);
+      } else {
+        message.channel.sendMessage(`No stats for user. Either a group mention, a bot, or user does not exist`);
+      }
+    }
+  }
+
   if (command == 'ping') {
-    msg.channel.sendMessage('pong!');
+    message.channel.sendMessage('pong!');
   }
 
   if (command == 'help') {
-    msg.channel.sendMessage('I am a noob and can only reply to !ping :(');
+    message.channel.sendMessage(helpMessage);
   }
 
   if (command == '8ball') {
-    msg.channel.sendMessage(ballAnswers[Math.floor(Math.random() * 20) +1]);
+    message.channel.sendMessage(ballAnswers[Math.floor(Math.random() * 20) +1]);
   }
+
   if (command == 'russian') {
     let chamber = 1;
-    if (!args[0]) {
-      msg.channel.sendMessage('Usage: !russian load, !russian spin, !russian pull');
+    if (!args[0] || args[0] == 'help') {
+        message.channel.sendMessage(`\`\`\`
+Usage:
+          ${config.prefix}russian  - Russian Roulette. Death = 10 minute mute!
+                    - load  - Loads a bullet.
+                    - spin  - Spins the chamber.
+                    - pull  - Pulls the trigger.
+        \`\`\``);
     }
     if (args[0] == 'load') {
       if (bullet == 0) {
         bullet = Math.floor(Math.random() * 6) + 1;
-        msg.channel.sendMessage('Loading bullet...');
+        message.channel.sendMessage('Loading bullet...');
       } else if (bullet > 0) {
-        msg.channel.sendMessage('Bullet already loaded...');
+        message.channel.sendMessage('Bullet already loaded...');
       }
     }
     if (args[0] == 'pull') {
       if (bullet > 0) {
         if (bullet == chamber) {
-          msg.channel.sendMessage('BANG!');
+          message.channel.sendMessage('BANG!');
+          stats[message.author.id].pulls++;
+          stats[message.author.id].deaths++;
+          let role = message.guild.roles.find('name', config.deathRole);
+          if (role) {
+            if (message.member.roles.has(role.id)) {
+              message.channel.sendMessage(`${message.member} is already dead but somehow manages to shoot themselves anyway. Must be a zombie?`)
+            } else {
+              message.member.addRole(role).catch(console.error);
+              message.channel.sendMessage(`${message.member}s brains explode! Rest in peace.`);
+              setTimeout(function() {
+                message.channel.sendMessage(`${message.member} has risen from the dead!`);
+                message.member.removeRole(role).catch(console.error);
+              }, 600000);
+            }
+          } else {
+            message.channel.sendMessage('No Death role. Please add Death role and update config.');
+          }
           bullet -= 1;
         } else {
-          msg.channel.sendMessage('CLICK!');
+          stats[message.author.id].pulls++;
+          message.channel.sendMessage('CLICK!');
           bullet -= 1;
         }
       } else {
-        msg.channel.sendMessage("Please load the gun...");
+        message.channel.sendMessage("Please load the gun...");
       }
     }
     if (args[0] == 'spin') {
       if (bullet > 0){
         bullet = Math.floor(Math.random() * 6) + 1;
-        msg.channel.sendMessage('Spinning chamber...');
+        stats[message.author.id].spins++;
+        message.channel.sendMessage('Spinning chamber...');
       } else {
-        msg.channel.sendMessage("Please load the gun...");
+        message.channel.sendMessage("Please load the gun...");
       }
     }
   }
+  fs.writeFile('./stats.json', JSON.stringify(stats), (err) => {
+    if (err) {
+      console.log(err)
+    }
+  });
 });
 
-bot.login(config.token);
+  bot.login(config.token);
