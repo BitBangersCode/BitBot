@@ -27,6 +27,9 @@ bot.on('ready', () => {
 bot.on('message', message => {
   if (message.author.bot) return;
   if (!message.content.startsWith(config.prefix)) return;
+  if (!stats[message.author.id]) {
+    stats[message.author.id] = {deaths: 0, spins: 0, pulls: 0}
+  }
 
   let statsMessage = `\`\`\`
   Stats for ${message.member.user.username}
@@ -34,10 +37,6 @@ bot.on('message', message => {
           Spins:    ${stats[message.author.id].spins}
           Pulls:    ${stats[message.author.id].pulls}
   \`\`\``
-
-  if (!stats[message.author.id]) {
-    stats[message.author.id] = {deaths: 0, spins: 0, pulls: 0}
-  }
 
   let command = message.content.split(' ')[0];
   command = command.slice(config.prefix.length);
@@ -141,6 +140,7 @@ Usage:
       if (bullet > 0) {
         if (bullet == chamber) {
           message.channel.sendMessage('BANG!');
+          stats[message.author.id].pulls++;
           stats[message.author.id].deaths++;
           let role = message.guild.roles.find('name', config.deathRole);
           if (role) {
@@ -159,6 +159,7 @@ Usage:
           }
           bullet -= 1;
         } else {
+          stats[message.author.id].pulls++;
           message.channel.sendMessage('CLICK!');
           bullet -= 1;
         }
@@ -169,6 +170,7 @@ Usage:
     if (args[0] == 'spin') {
       if (bullet > 0){
         bullet = Math.floor(Math.random() * 6) + 1;
+        stats[message.author.id].spins++;
         message.channel.sendMessage('Spinning chamber...');
       } else {
         message.channel.sendMessage("Please load the gun...");
