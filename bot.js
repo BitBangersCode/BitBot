@@ -101,8 +101,8 @@ bot.on('message', message => {
         `\`\`\`
 Stats for ${mention.username}
         Deaths:   ${stats[mention.id].deaths}
-        Spins:    ${stats[mention.author.id].spins}
-        Pulls:    ${stats[mention.author.id].pulls}
+        Spins:    ${stats[mention.id].spins}
+        Pulls:    ${stats[mention.id].pulls}
         \`\`\``
       } else {
         message.channel.sendMessage(`No stats for user. Either a group mention, a bot, or user does not exist`);
