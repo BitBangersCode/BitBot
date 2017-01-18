@@ -96,9 +96,14 @@ bot.on('message', message => {
       let mention = message.mentions.users.first();
       if (mention && !mention.bot) {
         if (!stats[mention.id]) {
-          stats[mention.id] = {deaths: 0};
+          stats[mention.id] = {deaths: 0, spins: 0, pulls: 0}
         }
-        message.channel.sendMessage(statsMessage);
+        `\`\`\`
+Stats for ${mention.username}
+        Deaths:   ${stats[mention.id].deaths}
+        Spins:    ${stats[mention.author.id].spins}
+        Pulls:    ${stats[mention.author.id].pulls}
+        \`\`\``
       } else {
         message.channel.sendMessage(`No stats for user. Either a group mention, a bot, or user does not exist`);
       }
