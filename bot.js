@@ -57,7 +57,7 @@ bot.on('message', message => {
       if (mention && !mention.bot) {
         let member = message.guild.member(mention);
         member.addRole(role);
-        message.channel.sendMessage(`${message.member} has been killed and sent to hell!`);
+        message.channel.sendMessage(`${member.user.toString()} has been killed and sent to hell!`);
       } else {
         message.channel.sendMessage(`Cannot kill user. Either a group mention, a bot, or user does not exist`);
       }
@@ -78,7 +78,7 @@ bot.on('message', message => {
       if (mention && !mention.bot) {
         let member = message.guild.member(mention);
         member.removeRole(role);
-        message.channel.sendMessage(`${message.member} have been brought back to the land of the living and is now alive!`);
+        message.channel.sendMessage(`${member.user.toString()} have been brought back to the land of the living and is now alive!`);
       } else {
         message.channel.sendMessage(`Cannot revive user. Either a group mention, a bot, or user does not exist`);
       }
