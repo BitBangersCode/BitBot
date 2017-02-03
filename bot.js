@@ -55,7 +55,4 @@ client.on('error', e => {
   console.log(e);
 });
 
-client.on('disconnect', e =>
-  console.log(e));
-
 client.login(config.token);
