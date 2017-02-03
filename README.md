@@ -6,7 +6,7 @@ Requires a config.json:
 ```
 {
   "token" : "TOKEN",
-  "prefix" : "!"
+  "prefix" : "!",
   "deathRole" : "role"
 }
 ```
