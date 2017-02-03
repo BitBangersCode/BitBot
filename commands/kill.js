@@ -16,7 +16,20 @@ exports.run = function(client, message, args){
       member.addRole(role);
       message.channel.sendMessage(`${member.user.toString()} has been killed and sent to hell!`);
     } else {
-      message.channel.sendMessage(`Cannot kill user. Either a group mention, a bot, or user does not exist`);
+      message.channel.sendMessage('Cannot kill user. Either a group mention, a bot, or user does not exist');
     }
   }
-}
+};
+
+exports.conf = {
+  enabled: true,
+  guildOnly: false,
+  aliases: [],
+  permLevel: 3
+};
+
+exports.help = {
+  name: 'kill',
+  description: 'Kill a player and send them to hell',
+  usage: 'kill <mention user>'
+};

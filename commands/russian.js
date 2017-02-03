@@ -1,5 +1,5 @@
 const config = require('../config.json');
-const fs = require("fs");
+const fs = require('fs');
 var bullet = 0;
 
 exports.run = function(client, message, args){
@@ -31,7 +31,7 @@ Usage:
         let role = message.guild.roles.find('name', config.deathRole);
         if (role) {
           if (message.member.roles.has(role.id)) {
-            message.channel.sendMessage(`${message.member} is already dead but somehow manages to shoot themselves anyway. Must be a zombie?`)
+            message.channel.sendMessage(`${message.member} is already dead but somehow manages to shoot themselves anyway. Must be a zombie?`);
           } else {
             message.member.addRole(role).catch(console.error);
             message.channel.sendMessage(`${message.member}s brains explode! Rest in peace.`);
@@ -50,7 +50,7 @@ Usage:
         bullet -= 1;
       }
     } else {
-      message.channel.sendMessage("Please load the gun...");
+      message.channel.sendMessage('Please load the gun...');
     }
   }
   if (args[0] == 'spin') {
@@ -59,12 +59,25 @@ Usage:
       stats[message.author.id].spins++;
       message.channel.sendMessage('Spinning chamber...');
     } else {
-      message.channel.sendMessage("Please load the gun...");
+      message.channel.sendMessage('Please load the gun...');
     }
   }
   fs.writeFile('./stats.json', JSON.stringify(stats), (err) => {
     if (err) {
-      console.log(err)
+      console.log(err);
     }
   });
-}
+};
+
+exports.conf = {
+  enabled: true,
+  guildOnly: false,
+  aliases: [],
+  permLevel: 0
+};
+
+exports.help = {
+  name: 'russian',
+  description: 'Play Russian Roulette',
+  usage: 'russian spin, russian load, russian pull'
+};
