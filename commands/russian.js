@@ -5,15 +5,6 @@ var bullet = 0;
 exports.run = function(client, message, args){
   let stats = JSON.parse(fs.readFileSync('./stats.json', 'utf8'));
   let chamber = 1;
-  if (!args[0] || args[0] == 'help') {
-      message.channel.sendMessage(`\`\`\`
-Usage:
-        ${config.prefix}russian  - Russian Roulette. Death = 10 minute mute!
-                  - load  - Loads a bullet.
-                  - spin  - Spins the chamber.
-                  - pull  - Pulls the trigger.
-      \`\`\``);
-  }
   if (args[0] == 'load') {
     if (bullet == 0) {
       bullet = Math.floor(Math.random() * 6) + 1;
