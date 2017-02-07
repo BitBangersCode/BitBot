@@ -5,24 +5,38 @@ const red = '#FF0000';
 const yellow = '#FFD700';
 
 exports.run = function(client, message, args){
+  args = args.join('+');
+  var colour;
   var embed = new Discord.RichEmbed();
-  let url = `http://www.omdbapi.com/?t=${args[0]}&y=&plot=short&r=json`;
+  let url = `http://www.omdbapi.com/?t=${args}&y=&plot=short&r=json`;
   request(url, function (error, response, filmData) {
     if (error) {
-      return console.log(error);
+      console.log(error);
+      message.channel.sendMessage('There has been an error');
+      return ;
     }
     if (response.statusCode != 200) {
-      message.channel.sendMessage(`There has been an error. Response code: ${response.statusCode}`)
+      return message.channel.sendMessage(`There has been an error. Response code: ${response.statusCode}`);
     }
-    if (filmData == 'The service is unavailable.') {
-      return message.channel.sendMessage('The service is unavailable.');
+    try{
+      filmData = JSON.parse(filmData);
+    } catch(e) {
+      console.log(e);
+      message.channel.sendMessage('There has been an error');
+      return;
     }
-    if (filmData.)
-    filmData = JSON.parse(filmData);
-    //embed.setTitle(filmData.Title);
-    embed.setDescription
-    embed.setColor(red);
-    //embed.setURL(`http://www.imdb.com/title/${filmData.imdbID}/`);
+    if (parseFloat(filmData.imdbRating)*10 >= 80){
+      colour = green;
+    }
+    if (parseFloat(filmData.imdbRating)*10 >= 60 && parseFloat(filmData.imdbRating)*10 < 80) {
+      colour = yellow;
+    }
+    if (parseFloat(filmData.imdbRating)*10 < 60){
+      colour = red;
+    }
+
+    embed.setDescription(`__**[${filmData.Title}](http://www.imdb.com/title/${filmData.imdbID}/)**__`);
+    embed.setColor(colour);
     embed.setThumbnail(filmData.Poster);
     embed.addField('Genre', filmData.Genre);
     embed.addField('Rating', `${filmData.Metascore}   - Meta Score
