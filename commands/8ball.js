@@ -1,5 +1,8 @@
 const ballAnswers = require('../8ball.json');
 exports.run = function(client, message, args){
+  if (!args[0]){
+      return message.channel.sendMessage('Please ask me a question!');
+  }
   message.channel.sendMessage(ballAnswers[Math.floor(Math.random() * 20) +1]);
 };
 

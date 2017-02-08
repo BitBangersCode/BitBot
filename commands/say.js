@@ -1,4 +1,7 @@
 exports.run = function(client, message, args){
+  if (!args[0]){
+      return message.channel.sendMessage('There was nothing to say!');
+  }
   message.channel.sendMessage(args.join(' '));
 };
 

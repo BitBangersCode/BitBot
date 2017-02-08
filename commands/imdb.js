@@ -5,6 +5,9 @@ const red = '#FF0000';
 const yellow = '#FFD700';
 
 exports.run = function(client, message, args){
+  if (!args[0]){
+      return message.channel.sendMessage('Please enter a search term.');
+  }
   args = args.join('+');
   var colour;
   var embed = new Discord.RichEmbed();
@@ -12,17 +15,17 @@ exports.run = function(client, message, args){
   request(url, function (error, response, filmData) {
     if (error) {
       console.log(error);
-      message.channel.sendMessage('There has been an error');
+      message.channel.sendMessage('There has been an error searching, please try again later.');
       return ;
     }
     if (response.statusCode != 200) {
-      return message.channel.sendMessage(`There has been an error. Response code: ${response.statusCode}`);
+      return message.channel.sendMessage('There has been an error searching, please try again later.');
     }
     try{
       filmData = JSON.parse(filmData);
     } catch(e) {
       console.log(e);
-      message.channel.sendMessage('There has been an error');
+      message.channel.sendMessage('There has been an error searching, please try again later.');
       return;
     }
     if (parseFloat(filmData.imdbRating)*10 >= 80){

@@ -3,6 +3,9 @@ const fs = require('fs');
 var bullet = 0;
 
 exports.run = function(client, message, args){
+  if (!args[0]){
+      return message.channel.sendMessage('Please load, spin or pull.');
+  }
   let stats = JSON.parse(fs.readFileSync('./stats.json', 'utf8'));
   let chamber = 1;
   if (args[0] == 'load') {
@@ -70,5 +73,5 @@ exports.conf = {
 exports.help = {
   name: 'russian',
   description: 'Play Russian Roulette',
-  usage: 'russian spin, russian load, russian pull'
+  usage: 'russian <spin>. russian <load>. Russian <pull>.'
 };
