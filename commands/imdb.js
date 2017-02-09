@@ -4,7 +4,7 @@ const green = '#008000';
 const red = '#FF0000';
 const yellow = '#FFD700';
 
-exports.run = function(client, message, args){
+exports.run = function(client, message, args) {
   if (!args[0]){
       return message.channel.sendMessage('Please enter a search term.');
   }
@@ -37,16 +37,19 @@ exports.run = function(client, message, args){
     if (parseFloat(filmData.imdbRating)*10 < 60){
       colour = red;
     }
+    if ('Error' in filmData) {
+      message.channel.sendMessage(filmData.Error);
+    } else {
+      embed.setDescription(`__**[${filmData.Title}](http://www.imdb.com/title/${filmData.imdbID}/)**__`);
+      embed.setColor(colour);
+      embed.setThumbnail(filmData.Poster);
+      embed.addField('Genre', filmData.Genre);
+      embed.addField('Rating', `${filmData.Metascore}   - Meta Score
+  ${filmData.imdbRating}  - IMDB Rating`);
+      embed.addField('Plot', filmData.Plot);
 
-    embed.setDescription(`__**[${filmData.Title}](http://www.imdb.com/title/${filmData.imdbID}/)**__`);
-    embed.setColor(colour);
-    embed.setThumbnail(filmData.Poster);
-    embed.addField('Genre', filmData.Genre);
-    embed.addField('Rating', `${filmData.Metascore}   - Meta Score
-${filmData.imdbRating}  - IMDB Rating`);
-    embed.addField('Plot', filmData.Plot);
-
-    message.channel.sendEmbed(embed);
+      message.channel.sendEmbed(embed);
+    }
   });
 };
 
