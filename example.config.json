@@ -1,0 +1,8 @@
+{
+  "token" : "Your token",
+  "prefix" : "Your prefix",
+  "deathRole" : "Your death role",
+  "modrole":  "your mod role",
+  "adminrole" : "your admin role",
+  "ownerid" : "your owner ID"
+}
