@@ -1,16 +1,27 @@
 const config = require('../config.json');
-const helpMessage = `\`\`\`
-Usage:
-        ${config.prefix}help     - Shows this help message.
-        ${config.prefix}ping     - Pong!
-        ${config.prefix}8ball    - Ask me a question.
-        ${config.prefix}russian  - Russian Roulette. Death = Banished to hell!
-                  - load  - Loads a bullet.
-                  - spin  - Spins the chamber.
-                  - pull  - Pulls the trigger.
-        ${config.prefix}stats    - Display user stast.
-\`\`\``;
+exports.run = (client, message, args) => {
+  if (!args[0]) {
+    const commandNames = Array.from(client.commands.keys());
+    const longest = commandNames.reduce((long, str) => Math.max(long, str.length), 0);
+    message.channel.sendCode('asciidoc', `= Command List =\n\n[Use ${config.prefix}help <commandname> for details]\n\n${client.commands.map(c => `${config.prefix}${c.help.name}${' '.repeat(longest - c.help.name.length)} :: ${c.help.description}`).join('\n')}`);
+  } else {
+    let command = args[0];
+    if (client.commands.has(command)) {
+      command = client.commands.get(command);
+      message.channel.sendCode('asciidoc', `= ${command.help.name} = \n${command.help.description}\nUsage:: ${command.help.usage}`);
+    }
+  }
+};
 
-exports.run = function(client, message, args){
-  message.channel.sendMessage(helpMessage);
-}
+exports.conf = {
+  enabled: true,
+  guildOnly: false,
+  aliases: [],
+  permLevel: 0
+};
+
+exports.help = {
+  name: 'help',
+  description: 'Displays all the available commands for your permission level.',
+  usage: 'help <command>'
+};
