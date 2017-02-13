@@ -1,4 +1,4 @@
-exports.run = function(client, message, args){
+exports.run = function(client, message){
   message.channel.sendMessage('pong!');
 };
 

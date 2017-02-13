@@ -2,17 +2,17 @@ exports.run = function(client, message, args){
   const user = message.mentions.users.first();
   const amount = isNaN(args[0]) ? parseInt(args[1]) : parseInt(args[0]);
   if (!amount && !user) {
-    return message.reply('Must specify a user and ammount, or just an ammount of message to purge.')
+    return message.reply('Must specify a user and ammount, or just an ammount of message to purge.');
   }
   if (!amount) {
-    return message.reply('Must specify ammount of messages to purge.')
+    return message.reply('Must specify ammount of messages to purge.');
   }
   message.channel.fetchMessages({
     limit: amount,
   }).then((messages) => {
     if (user) {
       const filterBy = user ? user.id : client.user.id;
-      messages = messages.filter(m => m.author.id == filterBy).array().slice(0, ammount);
+      messages = messages.filter(m => m.author.id == filterBy).array().slice(0, amount);
     }
     message.channel.bulkDelete(messages).catch(error => console.log(error.stack));
   });

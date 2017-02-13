@@ -7,16 +7,16 @@ const yellow = '#FFD700';
 
 exports.run = function(client, message, args) {
   if (!args[0]){
-      return message.channel.sendMessage('Please enter a search term.');
+    return message.channel.sendMessage('Please enter a search term.');
   }
   args = args.join(' ');
   var embed = new Discord.RichEmbed();
   var colour;
-  getSearchData(args, function(searchData) {
+  getSearchData(args, message, function(searchData) {
     if (searchData.total_results == 0) {
       message.channel.sendMessage('Movie not found');
     } else {
-      getFilmData(searchData.results[0].id, function(filmData) {
+      getFilmData(searchData.results[0].id, message, function(filmData) {
         if (parseFloat(filmData.vote_average)*10 >= 80){
           colour = green;
         } else if (parseFloat(filmData.vote_average)*10 >= 60 && parseFloat(filmData.vote_average)*10 < 80) {
@@ -25,7 +25,7 @@ exports.run = function(client, message, args) {
           colour = red;
         }
 
-        embed.setDescription(`__**${filmData.title}**__`);
+        embed.setDescription(`__**[${filmData.title}](https://www.themoviedb.org/movie/${filmData.id})**__`);
         embed.setColor(colour);
         embed.setThumbnail(`https://image.tmdb.org/t/p/w500${filmData.poster_path}`);
         embed.addField('Release Date', `${filmData.release_date}`);
@@ -39,7 +39,7 @@ exports.run = function(client, message, args) {
   });
 };
 
-function getFilmData(filmID, callback) {
+function getFilmData(filmID, message, callback) {
   var filmOptions = {
     method: 'GET',
     url: `https://api.themoviedb.org/3/movie/${filmID}`,
@@ -67,7 +67,7 @@ function getFilmData(filmID, callback) {
   });
 }
 
-function getSearchData(args, callback) {
+function getSearchData(args, message, callback) {
   var searchOptions = {
     method: 'GET',
     url: 'https://api.themoviedb.org/3/search/movie',

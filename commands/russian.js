@@ -4,7 +4,7 @@ var bullet = 0;
 
 exports.run = function(client, message, args){
   if (!args[0]){
-      return message.channel.sendMessage('Please load, spin or pull.');
+    return message.channel.sendMessage('Please load, spin or pull.');
   }
   let stats = JSON.parse(fs.readFileSync('./stats.json', 'utf8'));
   let chamber = 1;
