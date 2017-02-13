@@ -1,6 +1,8 @@
 {
   "token" : "Your token",
+  "tmdbKey" : "your The Movie Database API key",
   "prefix" : "Your prefix",
+  "userRold": "Your user role",
   "deathRole" : "Your death role",
   "modrole":  "your mod role",
   "adminrole" : "your admin role",
