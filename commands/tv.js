@@ -12,26 +12,28 @@ exports.run = function(client, message, args) {
   args = args.join(' ');
   var embed = new Discord.RichEmbed();
   var colour;
+
   getSearchData(args, message, function(searchData) {
     if (searchData.total_results == 0) {
       message.channel.sendMessage('Movie not found');
     } else {
-      getFilmData(searchData.results[0].id, message, function(filmData) {
-        if (parseFloat(filmData.vote_average)*10 >= 80){
+      getTvData(searchData.results[0].id, message, function(tvData) {
+        if (parseFloat(tvData.vote_average)*10 >= 80){
           colour = green;
-        } else if (parseFloat(filmData.vote_average)*10 >= 60 && parseFloat(filmData.vote_average)*10 < 80) {
+        } else if (parseFloat(tvData.vote_average)*10 >= 60 && parseFloat(tvData.vote_average)*10 < 80) {
           colour = yellow;
-        }else if (parseFloat(filmData.vote_average)*10 < 60){
+        }else if (parseFloat(tvData.vote_average)*10 < 60){
           colour = red;
         }
 
-        embed.setDescription(`__**[${filmData.title}](https://www.themoviedb.org/movie/${filmData.id})**__`);
+        embed.setDescription(`__**[${tvData.name}](https://www.themoviedb.org/tv/${tvData.id})**__`);
         embed.setColor(colour);
-        embed.setThumbnail(`https://image.tmdb.org/t/p/w500${filmData.poster_path}`);
-        embed.addField('Release Date', `${filmData.release_date}`);
-        embed.addField('Runtime', `${filmData.runtime} minutes`);
-        embed.addField('Rating', `${filmData.vote_average}  -  TheMovieDB User Score`);
-        embed.addField('Plot', filmData.overview);
+        embed.setThumbnail(`https://image.tmdb.org/t/p/w500${tvData.poster_path}`);
+        embed.addField('Release Date', `${tvData.first_air_date}`);
+        embed.addField('Episodes', `${tvData.number_of_episodes}   - Episodes
+${tvData.number_of_seasons}     - Seasons`);
+        embed.addField('Rating', `${tvData.vote_average}  -  TheMovieDB User Score`);
+        embed.addField('Plot', tvData.overview);
         embed.setFooter('Information provided by TMDb');
 
         message.channel.sendEmbed(embed);
@@ -40,10 +42,10 @@ exports.run = function(client, message, args) {
   });
 };
 
-function getFilmData(filmID, message, callback) {
-  var filmOptions = {
+function getTvData(tvID, message, callback) {
+  var tvOptions = {
     method: 'GET',
-    url: `https://api.themoviedb.org/3/movie/${filmID}`,
+    url: `https://api.themoviedb.org/3/tv/${tvID}`,
     qs: {
       language: 'en-US',
       api_key: config.tmdbKey
@@ -51,29 +53,28 @@ function getFilmData(filmID, message, callback) {
     body: '{}'
   };
 
-  request(filmOptions, function (error, response, filmData) {
+  request(tvOptions, function (error, response, tvData) {
     if (error || response.statusCode != 200) {
       console.log(error);
       message.channel.sendMessage('There has been an error searching, please try again later.');
       return;
     }
     try{
-      filmData = JSON.parse(filmData);
+      tvData = JSON.parse(tvData);
     } catch(e) {
       console.log(e);
       message.channel.sendMessage('There has been an error searching, please try again later.');
       return;
     }
-    return callback(filmData);
+    return callback(tvData);
   });
 }
 
 function getSearchData(args, message, callback) {
   var searchOptions = {
     method: 'GET',
-    url: 'https://api.themoviedb.org/3/search/movie',
+    url: 'https://api.themoviedb.org/3/search/tv',
     qs: {
-      include_adult: 'false',
       page: '1',
       query: args,
       language: 'en-US',
@@ -107,7 +108,7 @@ exports.conf = {
 };
 
 exports.help = {
-  name: 'movie',
-  description: 'Search TheMovieDB for movie information',
-  usage: 'movie <film>'
+  name: 'tv',
+  description: 'Search TheMovieDB for tv show information',
+  usage: 'tv <tv show>'
 };
