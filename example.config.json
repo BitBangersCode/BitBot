@@ -6,5 +6,6 @@
   "deathRole" : "Your death role",
   "modrole":  "your mod role",
   "adminrole" : "your admin role",
-  "ownerid" : "your owner ID"
+  "ownerid" : "your owner ID",
+  "logChannel" : "your log channel"
 }
