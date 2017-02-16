@@ -1,9 +1,9 @@
 const Discord = require('discord.js');
 const config = require('../config.json');
 var request = require('request');
-const green = '#008000';
-const red = '#FF0000';
-const yellow = '#FFD700';
+const green = '#10A854';
+const red = '#BA2A29';
+const yellow = '#FFFF66';
 
 exports.run = function(client, message, args) {
   if (!args[0]){
