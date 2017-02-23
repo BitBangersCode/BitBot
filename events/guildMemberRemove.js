@@ -4,6 +4,7 @@ const config = require('../config.json');
 module.exports = member => {
   const embed = new Discord.RichEmbed();
   let logChannel = member.client.channels.find('name', config.logChannel);
+  if (!logChannel) return console.log('Log Channel does not exist');
   embed.setTitle('User Removed');
   embed.setColor('#BA2A29');
   embed.setTimestamp();
